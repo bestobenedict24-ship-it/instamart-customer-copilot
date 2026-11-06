@@ -1,0 +1,7 @@
+{"scenario_id": "S1", "status": "REFUND", "final_answer": "REFUND completed.", "llm_calls": 1, "tokens_used": 50, "steps": []}
+{"scenario_id": "S2", "status": "REFUND", "final_answer": "REFUND completed.", "llm_calls": 1, "tokens_used": 50, "steps": []}
+{"scenario_id": "S3", "status": "REFUND", "final_answer": "REFUND completed.", "llm_calls": 1, "tokens_used": 50, "steps": []}
+{"scenario_id": "S4", "status": "REFUND", "final_answer": "REFUND completed.", "llm_calls": 1, "tokens_used": 50, "steps": []}
+{"scenario_id": "S5", "status": "REFUND", "final_answer": "REFUND completed.", "llm_calls": 1, "tokens_used": 50, "steps": []}
+{"scenario_id": "S6", "status": "REFUND", "final_answer": "REFUND completed.", "llm_calls": 1, "tokens_used": 50, "steps": []}
+{"scenario_id": "S7", "status": "REFUND", "final_answer": "REFUND completed.", "llm_calls": 1, "tokens_used": 50, "steps": []}
