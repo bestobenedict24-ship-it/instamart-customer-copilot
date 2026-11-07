@@ -59,19 +59,22 @@ This project provides a comprehensive quick-commerce solution covering customer 
 - **PII Masking & Safety**: Implemented regex-based redaction for phone numbers, email addresses, and credit card numbers prior to LLM processing.
 - **Safety Guardrails**: Implemented input/output filtering to prevent toxic prompts and out-of-scope customer queries.
 
-import re
+### Part C: Ticket Triage, PII Redaction & Guardrails
+- **Code Snippet (`part_c_triage.py`)**:
+  ```python
+  import re
 
-def redact_pii(text: str) -> str:
-    """Redact sensitive customer details (Email, Phone, Credit Card) prior to LLM processing."""
-    text = re.sub(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', '[EMAIL_MASKED]', text)
-    text = re.sub(r'\b\d{10}\b', '[PHONE_MASKED]', text)
-    text = re.sub(r'\b(?:\d[ -]*?){13,16}\b', '[CARD_MASKED]', text)
-    return text
+  def redact_pii(text: str) -> str:
+      """Redact sensitive customer details (Email, Phone, Credit Card) prior to LLM processing."""
+      text = re.sub(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', '[EMAIL_MASKED]', text)
+      text = re.sub(r'\b\d{10}\b', '[PHONE_MASKED]', text)
+      text = re.sub(r'\b(?:\d[ -]*?){13,16}\b', '[CARD_MASKED]', text)
+      return text
 
-def triage_ticket(ticket_text: str):
-    clean_text = redact_pii(ticket_text)
-    # Route to category & urgency tier
-    return {"sanitized_text": clean_text, "urgency": "HIGH", "category": "Delivery Delay"}
+  def triage_ticket(ticket_text: str):
+      clean_text = redact_pii(ticket_text)
+      # Route to category & urgency tier
+      return {"sanitized_text": clean_text, "urgency": "HIGH", "category": "Delivery Delay"}
 
 ### Part D: Policy RAG Assistant & Autonomous Refund Agent
 - **Task 1 & 2 (Chunking & Retrieval)**: Chunked policy text documents (`data/policies/`) into 40-word segments with 10-word overlap (15 total chunks) and built a TF-IDF cosine-similarity retrieval engine.
@@ -80,27 +83,30 @@ def triage_ticket(ticket_text: str):
 - **Task 6 & 7 (ReAct Agent & Fallbacks)**: Constructed autonomous loop handling customer scenarios (`agent_scenarios.csv`) across 7 scenarios with strict guardrails (max iterations, token caps, time-limits).
 - **Task 8 (State Checkpointing & Crash Resumption)**: Implemented mid-turn state persistence to `state/*.json` allowing interrupted agent runs to resume without repeating executed tools.
 
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+### Part D: Policy RAG Assistant & Autonomous Refund Agent
+- **Code Snippet (`part_d_agent.py`)**:
+  ```python
+  from sklearn.feature_extraction.text import TfidfVectorizer
+  from sklearn.metrics.pairwise import cosine_similarity
 
-# Step 1: Policy Retrieval Engine
-vectorizer = TfidfVectorizer()
-tfidf_matrix = vectorizer.fit_transform(policy_chunks)
+  # Step 1: Policy Retrieval Engine using TF-IDF
+  vectorizer = TfidfVectorizer()
+  tfidf_matrix = vectorizer.fit_transform(policy_chunks)
 
-def search_policy(query: str, top_k: int = 2):
-    query_vec = vectorizer.transform([query])
-    scores = cosine_similarity(query_vec, tfidf_matrix).flatten()
-    top_indices = scores.argsort()[-top_k:][::-1]
-    return [policy_chunks[i] for i in top_indices]
+  def search_policy(query: str, top_k: int = 2):
+      query_vec = vectorizer.transform([query])
+      scores = cosine_similarity(query_vec, tfidf_matrix).flatten()
+      top_indices = scores.argsort()[-top_k:][::-1]
+      return [policy_chunks[i] for i in top_indices]
 
-# Step 2: Tool Wrapper & Autonomous Execution
-def execute_tool(tool_name: str, **kwargs):
-    if tool_name == "calculate_refund":
-        return calculate_refund_amount(kwargs.get("order_id"))
-    elif tool_name == "issue_refund":
-        return issue_refund_transaction(kwargs.get("order_id"), kwargs.get("amount"))
-    elif tool_name == "escalate_to_human":
-        return escalate_ticket(kwargs.get("reason"))
+  # Step 2: Autonomous ReAct Tool Wrapper Execution
+  def execute_tool(tool_name: str, **kwargs):
+      if tool_name == "calculate_refund":
+          return calculate_refund_amount(kwargs.get("order_id"))
+      elif tool_name == "issue_refund":
+          return issue_refund_transaction(kwargs.get("order_id"), kwargs.get("amount"))
+      elif tool_name == "escalate_to_human":
+          return escalate_ticket(kwargs.get("reason"))
 
 ---
 
