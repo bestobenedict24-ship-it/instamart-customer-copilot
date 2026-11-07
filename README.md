@@ -32,6 +32,7 @@ This project provides a comprehensive quick-commerce solution covering customer 
   FROM orders;
 
 sample output:
+
 Total Orders: 12,309
 Total Unique Customers: 2,450
 Average Order Value (AOV): ₹845.50
@@ -86,11 +87,10 @@ customer_idRecencyFrequencySupport_TicketsPredicted_Lapse_RiskChurn_ProbabilityC
       return {"sanitized_text": clean_text, "urgency": "HIGH", "category": "Delivery Delay"}
 
 sample output:
-{
-    "sanitized_text": "Hi, my order is delayed and missing. Please call me at [PHONE_MASKED] or email [EMAIL_MASKED]. Charge my card [CARD_MASKED].",
-    "urgency": "HIGH",
-    "category": "Delivery Delay"
-}
+
+ "sanitized_text": "Hi, my order is delayed and missing. Please call me at [PHONE_MASKED] or email [EMAIL_MASKED]. Charge my card [CARD_MASKED].",
+ "urgency": "HIGH",
+ "category": "Delivery Delay"
 
 ### Part D: Policy RAG Assistant & Autonomous Refund Agent
 - **Task 1 & 2 (Chunking & Retrieval)**: Chunked policy text documents (`data/policies/`) into 40-word segments with 10-word overlap (15 total chunks) and built a TF-IDF cosine-similarity retrieval engine.
@@ -126,11 +126,11 @@ sample output:
 
 sample output:
 
-    "order_id": "ORD-9982",
-    "item_amount": 450.00,
-    "delivery_fee": 40.00,
-    "total_refundable": 490.00,
-    "eligibility": "Eligible for Full Refund"
+ "order_id": "ORD-9982",
+ "item_amount": 450.00,
+ "delivery_fee": 40.00,
+ "total_refundable": 490.00,
+ "eligibility": "Eligible for Full Refund"
 
 ---
 
