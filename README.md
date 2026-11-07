@@ -35,6 +35,7 @@ This project provides a comprehensive quick-commerce solution covering customer 
 - **Segmentation Model**: Categorized customers into key operational buckets (e.g., High-Value Loyal, At-Risk, Lapsed).
 - **Lapse Risk Classifier**: Trained and evaluated predictive models to identify customers likely to churn due to order delays or support friction.
 
+python
 # RFM Feature Calculation
 rfm = df.groupby('customer_id').agg({
     'order_date': lambda x: (datetime.now() - x.max()).days,
@@ -47,6 +48,7 @@ rfm = df.groupby('customer_id').agg({
 - **PII Masking & Safety**: Implemented regex-based redaction for phone numbers, email addresses, and credit card numbers prior to LLM processing.
 - **Safety Guardrails**: Implemented input/output filtering to prevent toxic prompts and out-of-scope customer queries.
 
+python
 import re
 def redact_pii(text):
     # Regex masking for phone, email, and credit card numbers
@@ -61,6 +63,7 @@ def redact_pii(text):
 - **Task 6 & 7 (ReAct Agent & Fallbacks)**: Constructed autonomous loop handling customer scenarios (`agent_scenarios.csv`) across 7 scenarios with strict guardrails (max iterations, token caps, time-limits).
 - **Task 8 (State Checkpointing & Crash Resumption)**: Implemented mid-turn state persistence to `state/*.json` allowing interrupted agent runs to resume without repeating executed tools.
 
+python
 # TF-IDF Cosine Similarity Retrieval for Policy RAG
 vectorizer = TfidfVectorizer()
 tfidf_matrix = vectorizer.fit_transform(policy_chunks)
@@ -75,22 +78,27 @@ similarity = cosine_similarity(query_vec, tfidf_matrix)
 ## Project Structure & Architecture
 
 ```text
-instamart-customer-copilot/
-│
-├── data/
-│   ├── policies/          # Policy text documents
-│   ├── instamart.db       # SQLite database containing order and customer records
-│   └── raw/               # Evaluation datasets
-│
-├── outputs/               # Generated logs and ledgers
-│   ├── agent_runs.jsonl
-│   └── refund_ledger.jsonl
-│
-├── sql/
-│   └── queries.sql        # SQL analytics & schema verification queries for Part A
-│
-├── state/                 # JSON execution checkpoints
-├── .gitignore             # Git ignore configuration
-├── requirements.txt       # Project dependencies (pandas, numpy, scikit-learn)
-├── part_d_agent.py        # Core Part D execution pipeline
-└── README.md              # Project documentation
+📁 instamart-customer-copilot
+├── 📁 data
+│   ├── 📁 policies
+│   ├── 📄 instamart.db
+│   └── 📁 raw
+├── 📁 outputs
+│   ├── 📄 agent_runs.jsonl
+│   └── 📄 refund_ledger.jsonl
+├── 📁 sql
+│   └── 📄 queries.sql
+├── 📁 state
+├── 📄 .gitignore
+├── 📄 audit_data.py
+├── 📄 build_profiles.py
+├── 📄 clean_data.py
+├── 📄 generate_data.py
+├── 📄 mock_llm.py
+├── 📄 part_b_final.py
+├── 📄 part_b_lapse_model.py
+├── 📄 part_b_rfm_clusters.py
+├── 📄 part_c_triage.py
+├── 📄 part_d_agent.py
+├── 📄 README.md
+└── 📄 requirements.txt
