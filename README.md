@@ -42,3 +42,26 @@ This project provides a comprehensive quick-commerce solution covering customer 
 ## Limitations and Next Steps
 - **Limitations**: TF-IDF retrieval works well for keyword-heavy policies but can struggle with semantic paraphrasing compared to dense vector embeddings.
 - **Next Steps**: Integrate vector embeddings (e.g., OpenAI or Hugging Face embeddings) with a vector database for semantic search, and deploy the agent via a web interface (Streamlit).
+
+## Project Structure & Architecture
+
+```text
+instamart-customer-copilot/
+│
+├── data/
+│   ├── policies/          # Policy text documents
+│   ├── instamart.db       # SQLite database containing order and customer records
+│   └── raw/               # Evaluation datasets
+│
+├── outputs/               # Generated logs and ledgers
+│   ├── agent_runs.jsonl
+│   └── refund_ledger.jsonl
+│
+├── sql/
+│   └── queries.sql        # SQL analytics & schema verification queries for Part A
+│
+├── state/                 # JSON execution checkpoints
+├── .gitignore             # Git ignore configuration
+├── requirements.txt       # Project dependencies (pandas, numpy, scikit-learn)
+├── part_d_agent.py        # Core Part D execution pipeline
+└── README.md              # Project documentation
