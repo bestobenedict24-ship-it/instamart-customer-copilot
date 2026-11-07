@@ -35,12 +35,24 @@ This project provides a comprehensive quick-commerce solution covering customer 
 - **Segmentation Model**: Categorized customers into key operational buckets (e.g., High-Value Loyal, At-Risk, Lapsed).
 - **Lapse Risk Classifier**: Trained and evaluated predictive models to identify customers likely to churn due to order delays or support friction.
 
-# RFM Feature Calculation
-rfm = df.groupby('customer_id').agg({
-    'order_date': lambda x: (datetime.now() - x.max()).days,
-    'order_id': 'count',
-    'order_amount': 'sum'
-}).rename(columns={'order_date': 'Recency', 'order_id': 'Frequency', 'order_amount': 'Monetary'})
+## Core Implementation & Code Highlights
+
+### Part B: Customer Segmentation & Churn Modeling
+* **RFM Feature Engineering & Lapse Risk Classifier (`part_b_rfm_clusters.py` & `part_b_lapse_model.py`)**:
+  ```python
+  import pandas as pd
+  from sklearn.ensemble import RandomForestClassifier
+
+  # Aggregate Recency, Frequency, and Monetary metrics
+  rfm = df.groupby('customer_id').agg({
+      'order_date': lambda x: (snapshot_date - x.max()).days,
+      'order_id': 'count',
+      'order_amount': 'sum'
+  }).rename(columns={'order_date': 'Recency', 'order_id': 'Frequency', 'order_amount': 'Monetary'})
+
+  # Train lapse risk model based on delivery friction & support complaints
+  model = RandomForestClassifier(n_estimators=100, random_state=42)
+  model.fit(X_train, y_train)
 
 ### Part C: Ticket Triage, PII Redaction & Guardrails
 - **Automated Triage Engine**: Categorized customer support tickets by issue type and urgency tier.
@@ -48,11 +60,18 @@ rfm = df.groupby('customer_id').agg({
 - **Safety Guardrails**: Implemented input/output filtering to prevent toxic prompts and out-of-scope customer queries.
 
 import re
-def redact_pii(text):
-    # Regex masking for phone, email, and credit card numbers
+
+def redact_pii(text: str) -> str:
+    """Redact sensitive customer details (Email, Phone, Credit Card) prior to LLM processing."""
     text = re.sub(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', '[EMAIL_MASKED]', text)
     text = re.sub(r'\b\d{10}\b', '[PHONE_MASKED]', text)
+    text = re.sub(r'\b(?:\d[ -]*?){13,16}\b', '[CARD_MASKED]', text)
     return text
+
+def triage_ticket(ticket_text: str):
+    clean_text = redact_pii(ticket_text)
+    # Route to category & urgency tier
+    return {"sanitized_text": clean_text, "urgency": "HIGH", "category": "Delivery Delay"}
 
 ### Part D: Policy RAG Assistant & Autonomous Refund Agent
 - **Task 1 & 2 (Chunking & Retrieval)**: Chunked policy text documents (`data/policies/`) into 40-word segments with 10-word overlap (15 total chunks) and built a TF-IDF cosine-similarity retrieval engine.
@@ -61,10 +80,27 @@ def redact_pii(text):
 - **Task 6 & 7 (ReAct Agent & Fallbacks)**: Constructed autonomous loop handling customer scenarios (`agent_scenarios.csv`) across 7 scenarios with strict guardrails (max iterations, token caps, time-limits).
 - **Task 8 (State Checkpointing & Crash Resumption)**: Implemented mid-turn state persistence to `state/*.json` allowing interrupted agent runs to resume without repeating executed tools.
 
-# TF-IDF Cosine Similarity Retrieval for Policy RAG
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+# Step 1: Policy Retrieval Engine
 vectorizer = TfidfVectorizer()
 tfidf_matrix = vectorizer.fit_transform(policy_chunks)
-similarity = cosine_similarity(query_vec, tfidf_matrix)
+
+def search_policy(query: str, top_k: int = 2):
+    query_vec = vectorizer.transform([query])
+    scores = cosine_similarity(query_vec, tfidf_matrix).flatten()
+    top_indices = scores.argsort()[-top_k:][::-1]
+    return [policy_chunks[i] for i in top_indices]
+
+# Step 2: Tool Wrapper & Autonomous Execution
+def execute_tool(tool_name: str, **kwargs):
+    if tool_name == "calculate_refund":
+        return calculate_refund_amount(kwargs.get("order_id"))
+    elif tool_name == "issue_refund":
+        return issue_refund_transaction(kwargs.get("order_id"), kwargs.get("amount"))
+    elif tool_name == "escalate_to_human":
+        return escalate_ticket(kwargs.get("reason"))
 
 ---
 
