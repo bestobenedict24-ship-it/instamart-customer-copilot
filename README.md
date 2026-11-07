@@ -119,27 +119,25 @@ This project provides a comprehensive quick-commerce solution covering customer 
 ## Project Structure & Architecture
 
 ```text
-📁 instamart-customer-copilot
-├── 📁 data
-│   ├── 📁 policies
-│   ├── 📄 instamart.db
-│   └── 📁 raw
-├── 📁 outputs
-│   ├── 📄 agent_runs.jsonl
-│   └── 📄 refund_ledger.jsonl
-├── 📁 sql
-│   └── 📄 queries.sql
-├── 📁 state
-├── 📄 .gitignore
-├── 📄 audit_data.py
-├── 📄 build_profiles.py
-├── 📄 clean_data.py
-├── 📄 generate_data.py
-├── 📄 mock_llm.py
-├── 📄 part_b_final.py
-├── 📄 part_b_lapse_model.py
-├── 📄 part_b_rfm_clusters.py
-├── 📄 part_c_triage.py
-├── 📄 part_d_agent.py
-├── 📄 README.md
-└── 📄 requirements.txt
+instamart-customer-copilot/
+│
+├── data/
+│   └── instamart.db          # SQLite database containing order & customer records
+│
+├── sql/
+│   └── queries.sql           # Part A: SQL analytics & schema verification queries
+│
+├── outputs/                  # Generated models, logs, and evaluation ledgers
+│
+├── audit_data.py             # Data audit script
+├── build_profiles.py         # Customer profile builder pipeline
+├── clean_data.py             # Data cleaning and normalization script
+├── generate_data.py          # Synthetic data generator
+├── mock_llm.py               # Mock LLM chat completion handler
+├── part_b_final.py           # Part B orchestration script
+├── part_b_lapse_model.py     # Lapse risk predictive classifier
+├── part_b_rfm_clusters.py    # RFM customer segmentation model
+├── part_c_triage.py          # Support ticket triage, PII masking & guardrails
+├── part_d_agent.py           # Part D: Policy RAG & ReAct refund agent pipeline
+├── requirements.txt          # Core project dependencies (pandas, numpy, scikit-learn)
+└── README.md                 # End-to-end project documentation
