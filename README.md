@@ -32,6 +32,7 @@ This project provides a comprehensive quick-commerce solution covering customer 
   FROM orders;
 
 sample output:
+
 Total Orders: 12,309
 Total Unique Customers: 2,450
 Average Order Value (AOV): ₹845.50
