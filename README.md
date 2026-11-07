@@ -35,7 +35,6 @@ This project provides a comprehensive quick-commerce solution covering customer 
 - **Segmentation Model**: Categorized customers into key operational buckets (e.g., High-Value Loyal, At-Risk, Lapsed).
 - **Lapse Risk Classifier**: Trained and evaluated predictive models to identify customers likely to churn due to order delays or support friction.
 
-python
 # RFM Feature Calculation
 rfm = df.groupby('customer_id').agg({
     'order_date': lambda x: (datetime.now() - x.max()).days,
@@ -48,7 +47,6 @@ rfm = df.groupby('customer_id').agg({
 - **PII Masking & Safety**: Implemented regex-based redaction for phone numbers, email addresses, and credit card numbers prior to LLM processing.
 - **Safety Guardrails**: Implemented input/output filtering to prevent toxic prompts and out-of-scope customer queries.
 
-python
 import re
 def redact_pii(text):
     # Regex masking for phone, email, and credit card numbers
@@ -63,7 +61,6 @@ def redact_pii(text):
 - **Task 6 & 7 (ReAct Agent & Fallbacks)**: Constructed autonomous loop handling customer scenarios (`agent_scenarios.csv`) across 7 scenarios with strict guardrails (max iterations, token caps, time-limits).
 - **Task 8 (State Checkpointing & Crash Resumption)**: Implemented mid-turn state persistence to `state/*.json` allowing interrupted agent runs to resume without repeating executed tools.
 
-python
 # TF-IDF Cosine Similarity Retrieval for Policy RAG
 vectorizer = TfidfVectorizer()
 tfidf_matrix = vectorizer.fit_transform(policy_chunks)
