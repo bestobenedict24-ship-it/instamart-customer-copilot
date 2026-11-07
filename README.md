@@ -19,16 +19,18 @@ This project provides a comprehensive quick-commerce solution covering customer 
 ### Part A: Exploratory Data Analysis & Schema Verification
 - **SQLite Database Integration**: Queried and validated core tables (`customers`, `orders`, `support_tickets`, `refunds`) in `data/instamart.db`.
 - **Data Integrity & Metrics**: Calculated baseline order volume, average order value (AOV), delivery latency distributions, and initial ticket issue distributions.
-## Project Implementation & Code Highlights
 
 ### Part A: SQL Analytics
-* **Code Snippet (`sql/queries.sql`)**:
+- **Code Snippet (`sql/queries.sql`)**:
   ```sql
+  -- Query 1: Total Volume & Order Summary Metrics
   SELECT 
       COUNT(order_id) AS total_orders,
+      COUNT(DISTINCT customer_id) AS total_unique_customers,
       ROUND(AVG(order_amount), 2) AS average_order_value,
       SUM(order_amount) AS total_revenue
   FROM orders;
+
 
 ### Part B: Customer Segmentation & Lapse Prediction
 - **Feature Engineering**: Built RFM (Recency, Frequency, Monetary) metrics and operational parameters (late delivery count, refund history).
