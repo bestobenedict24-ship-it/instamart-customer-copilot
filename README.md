@@ -19,16 +19,40 @@ This project provides a comprehensive quick-commerce solution covering customer 
 ### Part A: Exploratory Data Analysis & Schema Verification
 - **SQLite Database Integration**: Queried and validated core tables (`customers`, `orders`, `support_tickets`, `refunds`) in `data/instamart.db`.
 - **Data Integrity & Metrics**: Calculated baseline order volume, average order value (AOV), delivery latency distributions, and initial ticket issue distributions.
+## Project Implementation & Code Highlights
+
+### Part A: SQL Analytics
+* **Code Snippet (`sql/queries.sql`)**:
+  ```sql
+  SELECT 
+      COUNT(order_id) AS total_orders,
+      ROUND(AVG(order_amount), 2) AS average_order_value,
+      SUM(order_amount) AS total_revenue
+  FROM orders;
 
 ### Part B: Customer Segmentation & Lapse Prediction
 - **Feature Engineering**: Built RFM (Recency, Frequency, Monetary) metrics and operational parameters (late delivery count, refund history).
 - **Segmentation Model**: Categorized customers into key operational buckets (e.g., High-Value Loyal, At-Risk, Lapsed).
 - **Lapse Risk Classifier**: Trained and evaluated predictive models to identify customers likely to churn due to order delays or support friction.
 
+# RFM Feature Calculation
+rfm = df.groupby('customer_id').agg({
+    'order_date': lambda x: (datetime.now() - x.max()).days,
+    'order_id': 'count',
+    'order_amount': 'sum'
+}).rename(columns={'order_date': 'Recency', 'order_id': 'Frequency', 'order_amount': 'Monetary'})
+
 ### Part C: Ticket Triage, PII Redaction & Guardrails
 - **Automated Triage Engine**: Categorized customer support tickets by issue type and urgency tier.
 - **PII Masking & Safety**: Implemented regex-based redaction for phone numbers, email addresses, and credit card numbers prior to LLM processing.
 - **Safety Guardrails**: Implemented input/output filtering to prevent toxic prompts and out-of-scope customer queries.
+
+import re
+def redact_pii(text):
+    # Regex masking for phone, email, and credit card numbers
+    text = re.sub(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', '[EMAIL_MASKED]', text)
+    text = re.sub(r'\b\d{10}\b', '[PHONE_MASKED]', text)
+    return text
 
 ### Part D: Policy RAG Assistant & Autonomous Refund Agent
 - **Task 1 & 2 (Chunking & Retrieval)**: Chunked policy text documents (`data/policies/`) into 40-word segments with 10-word overlap (15 total chunks) and built a TF-IDF cosine-similarity retrieval engine.
@@ -36,6 +60,11 @@ This project provides a comprehensive quick-commerce solution covering customer 
 - **Task 5 (Agent Tool Suite)**: Defined functional tool wrappers (`get_order`, `search_policy`, `calculate_refund`, `issue_refund`, `escalate_to_human`).
 - **Task 6 & 7 (ReAct Agent & Fallbacks)**: Constructed autonomous loop handling customer scenarios (`agent_scenarios.csv`) across 7 scenarios with strict guardrails (max iterations, token caps, time-limits).
 - **Task 8 (State Checkpointing & Crash Resumption)**: Implemented mid-turn state persistence to `state/*.json` allowing interrupted agent runs to resume without repeating executed tools.
+
+# TF-IDF Cosine Similarity Retrieval for Policy RAG
+vectorizer = TfidfVectorizer()
+tfidf_matrix = vectorizer.fit_transform(policy_chunks)
+similarity = cosine_similarity(query_vec, tfidf_matrix)
 
 ---
 
