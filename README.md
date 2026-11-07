@@ -63,7 +63,9 @@ Total Revenue: ₹10,405,200.00
   model.fit(X_train, y_train)
 
 sample output:
+
 customer_idRecencyFrequencySupport_TicketsPredicted_Lapse_RiskChurn_ProbabilityCUST_10013140Low Risk0.08CUST_10524523High Risk0.79CUST_10996012High Risk0.88CUST_1104581Low Risk0.15
+
 ### Part C: Ticket Triage, PII Redaction & Guardrails
 - **Automated Triage Engine**: Categorized customer support tickets by issue type and urgency tier.
 - **PII Masking & Safety**: Implemented regex-based redaction for phone numbers, email addresses, and credit card numbers prior to LLM processing.
