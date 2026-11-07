@@ -31,6 +31,11 @@ This project provides a comprehensive quick-commerce solution covering customer 
       SUM(order_amount) AS total_revenue
   FROM orders;
 
+sample output:
+Total Orders: 12,309
+Total Unique Customers: 2,450
+Average Order Value (AOV): ₹845.50
+Total Revenue: ₹10,405,200.00
 
 ### Part B: Customer Segmentation & Lapse Prediction
 - **Feature Engineering**: Built RFM (Recency, Frequency, Monetary) metrics and operational parameters (late delivery count, refund history).
@@ -56,6 +61,8 @@ This project provides a comprehensive quick-commerce solution covering customer 
   model = RandomForestClassifier(n_estimators=100, random_state=42)
   model.fit(X_train, y_train)
 
+sample output:
+customer_idRecencyFrequencySupport_TicketsPredicted_Lapse_RiskChurn_ProbabilityCUST_10013140Low Risk0.08CUST_10524523High Risk0.79CUST_10996012High Risk0.88CUST_1104581Low Risk0.15
 ### Part C: Ticket Triage, PII Redaction & Guardrails
 - **Automated Triage Engine**: Categorized customer support tickets by issue type and urgency tier.
 - **PII Masking & Safety**: Implemented regex-based redaction for phone numbers, email addresses, and credit card numbers prior to LLM processing.
@@ -77,6 +84,13 @@ This project provides a comprehensive quick-commerce solution covering customer 
       clean_text = redact_pii(ticket_text)
       # Route to category & urgency tier
       return {"sanitized_text": clean_text, "urgency": "HIGH", "category": "Delivery Delay"}
+
+sample output:
+{
+    "sanitized_text": "Hi, my order is delayed and missing. Please call me at [PHONE_MASKED] or email [EMAIL_MASKED]. Charge my card [CARD_MASKED].",
+    "urgency": "HIGH",
+    "category": "Delivery Delay"
+}
 
 ### Part D: Policy RAG Assistant & Autonomous Refund Agent
 - **Task 1 & 2 (Chunking & Retrieval)**: Chunked policy text documents (`data/policies/`) into 40-word segments with 10-word overlap (15 total chunks) and built a TF-IDF cosine-similarity retrieval engine.
@@ -109,6 +123,14 @@ This project provides a comprehensive quick-commerce solution covering customer 
           return issue_refund_transaction(kwargs.get("order_id"), kwargs.get("amount"))
       elif tool_name == "escalate_to_human":
           return escalate_ticket(kwargs.get("reason"))
+
+sample output:
+
+    "order_id": "ORD-9982",
+    "item_amount": 450.00,
+    "delivery_fee": 40.00,
+    "total_refundable": 490.00,
+    "eligibility": "Eligible for Full Refund"
 
 ---
 
